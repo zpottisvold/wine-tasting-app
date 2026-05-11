@@ -4,7 +4,6 @@
 ═══════════════════════════════════════════════════ */
 
 const STORAGE_KEY = 'wineTastings_v2';
-const API_KEY_KEY = 'wt_anthropic_key';
 
 /* ── Wheel Data ──────────────────────────────────────
    8 categories → sub-categories → specific descriptors
@@ -169,10 +168,6 @@ function buildWheelSVG(svgId) {
    BUILD PANEL HTML
 ═══════════════════════════════════════════════════ */
 function buildPanelHTML(ctx) {
-  const ph = ctx === 'nose'
-    ? 'e.g. "smells like my gran\'s fruit bowl" or "forest after rain"…'
-    : 'e.g. "tastes like dark berries with a hint of coffee"…';
-
   return `
     <div class="wheel-panel">
 
@@ -183,22 +178,6 @@ function buildPanelHTML(ctx) {
       <div class="wheel-drill">
         <div class="drill-subs hidden" id="${ctx}Subs"></div>
         <div class="drill-items hidden" id="${ctx}Items"></div>
-      </div>
-
-      <div class="ai-section">
-        <div class="ai-header">
-          <div class="ai-header-left">
-            <span class="ai-gem">✦</span>
-            <span class="ai-title">Describe it in plain words</span>
-          </div>
-          <button class="ai-key-btn" id="${ctx}KeyBtn">API key</button>
-        </div>
-        <div class="ai-messages" id="${ctx}Msgs"></div>
-        <div class="ai-input-row">
-          <input class="ai-input" id="${ctx}Input" type="text"
-            placeholder="${ph}" autocomplete="off" />
-          <button class="ai-send" id="${ctx}Send">&#8594;</button>
-        </div>
       </div>
 
       <div class="selected-section hidden" id="${ctx}SelSection">
@@ -335,7 +314,7 @@ function renderTags(ctx) {
   });
 }
 
-/* Highlight items that the AI suggested (if same sub is open) */
+/* Sync item button active states after external selection changes */
 function refreshItemButtons(ctx) {
   const state = wheelState[ctx];
   document.querySelectorAll(`#${ctx}Items .drill-item-btn`).forEach(btn => {
@@ -343,185 +322,18 @@ function refreshItemButtons(ctx) {
   });
 }
 
-/* ═══════════════════════════════════════════════════
-   API KEY MANAGEMENT
-═══════════════════════════════════════════════════ */
-function getKey()       { return localStorage.getItem(API_KEY_KEY) || ''; }
-function saveKey(k)     { localStorage.setItem(API_KEY_KEY, k); }
-function clearKey()     { localStorage.removeItem(API_KEY_KEY); }
-
-function updateKeyBtns() {
-  const hasKey = !!getKey();
-  document.querySelectorAll('.ai-key-btn').forEach(btn => {
-    btn.textContent = hasKey ? 'Key set ✓' : 'Set API key';
-    btn.classList.toggle('key-set', hasKey);
-  });
-}
-
-function openKeyModal(afterSave) {
-  const modal   = document.getElementById('apiKeyModal');
-  const input   = document.getElementById('apiKeyInput');
-  const saveBtn = document.getElementById('apiKeySave');
-  const cancel  = document.getElementById('apiKeyCancel');
-
-  input.value = getKey();
-  modal.classList.remove('hidden');
-  setTimeout(() => input.focus(), 80);
-
-  const doSave = () => {
-    const val = input.value.trim();
-    if (val) { saveKey(val); updateKeyBtns(); modal.classList.add('hidden'); afterSave?.(); }
-    else     { input.focus(); }
-    saveBtn.removeEventListener('click', doSave);
-    cancel.removeEventListener('click', doCancel);
-  };
-  const doCancel = () => {
-    modal.classList.add('hidden');
-    saveBtn.removeEventListener('click', doSave);
-    cancel.removeEventListener('click', doCancel);
-  };
-
-  saveBtn.addEventListener('click', doSave);
-  cancel.addEventListener('click', doCancel);
-  input.addEventListener('keydown', e => { if (e.key === 'Enter') doSave(); }, { once: true });
-}
-
-/* ═══════════════════════════════════════════════════
-   AI CHAT
-═══════════════════════════════════════════════════ */
-function initAIChat(ctx) {
-  const input   = document.getElementById(ctx + 'Input');
-  const sendBtn = document.getElementById(ctx + 'Send');
-  const keyBtn  = document.getElementById(ctx + 'KeyBtn');
-  const clearSelBtn = document.getElementById(ctx + 'ClearSel');
-
-  keyBtn.addEventListener('click', () => openKeyModal());
-
-  clearSelBtn.addEventListener('click', () => {
-    wheelState[ctx].selected.clear();
-    renderTags(ctx);
-    refreshItemButtons(ctx);
-  });
-
-  async function send() {
-    const text = input.value.trim();
-    if (!text) return;
-
-    if (!getKey()) {
-      openKeyModal(() => {
-        // Retry after key is saved
-        input.value = text;
-        send();
-      });
-      return;
-    }
-
-    addBubble(ctx, text, 'user');
-    input.value   = '';
-    sendBtn.disabled = true;
-
-    const thinkingBubble = addBubble(ctx, 'Thinking…', 'thinking');
-
-    try {
-      const result = await callAI(text, ctx);
-      thinkingBubble.remove();
-
-      if (result.message) {
-        addBubble(ctx, result.message, 'assistant');
-      }
-
-      if (result.suggestions?.length) {
-        const state = wheelState[ctx];
-        let added = 0;
-        result.suggestions.forEach(item => {
-          if (ALL_ITEMS.includes(item)) {
-            state.selected.add(item);
-            added++;
-          }
-        });
-        if (added) {
-          renderTags(ctx);
-          refreshItemButtons(ctx);
-        }
-      }
-    } catch (err) {
-      thinkingBubble.remove();
-      const msg = err.message?.includes('401')
-        ? 'Invalid API key. Tap "Key set ✓" to update it.'
-        : 'Couldn\'t reach the AI right now. Try again or browse the wheel.';
-      addBubble(ctx, msg, 'error');
-    }
-
-    sendBtn.disabled = false;
-    input.focus();
-  }
-
-  sendBtn.addEventListener('click', send);
-  input.addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
-}
-
-function addBubble(ctx, text, type) {
-  const msgsEl = document.getElementById(ctx + 'Msgs');
-  const div = document.createElement('div');
-  div.className = `ai-bubble ${type}`;
-  div.textContent = text;
-  msgsEl.appendChild(div);
-  msgsEl.scrollTop = msgsEl.scrollHeight;
-  return div;
-}
-
-async function callAI(description, ctx) {
-  const label = ctx === 'nose' ? 'nose / aromas' : 'palate / taste flavours';
-
-  const system = `You are a wine tasting assistant embedded in a tasting notes app.
-The user is describing what they detect on the ${label} of a wine in everyday, non-technical language.
-Translate their description into proper wine tasting vocabulary.
-
-Available descriptors — you MUST only suggest items from this exact list:
-${ALL_ITEMS.join(', ')}
-
-Respond ONLY with a raw JSON object. No markdown, no code fences, no extra text. Format:
-{"message":"1-2 warm sentences acknowledging their description and what it likely corresponds to in wine terms.","suggestions":["ExactDescriptor1","ExactDescriptor2"]}
-
-Limit to 2–5 suggestions. Only use exact strings from the list above.`;
-
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': getKey(),
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true',
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1000,
-      system,
-      messages: [{ role: 'user', content: description }],
-    }),
-  });
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error?.message || `HTTP ${res.status}`);
-  }
-
-  const data = await res.json();
-  const raw  = data.content?.find(b => b.type === 'text')?.text || '{}';
-  return JSON.parse(raw.replace(/```json|```/g, '').trim());
-}
-
-/* ═══════════════════════════════════════════════════
-   INITIALISE ALL WHEEL PANELS
-═══════════════════════════════════════════════════ */
 function initAllPanels() {
   document.querySelectorAll('.wheel-ai-container').forEach(container => {
     const ctx = container.dataset.context;
     container.innerHTML = buildPanelHTML(ctx);
     initWheel(ctx);
-    initAIChat(ctx);
+
+    document.getElementById(ctx + 'ClearSel').addEventListener('click', () => {
+      wheelState[ctx].selected.clear();
+      renderTags(ctx);
+      refreshItemButtons(ctx);
+    });
   });
-  updateKeyBtns();
 }
 
 /* ═══════════════════════════════════════════════════
