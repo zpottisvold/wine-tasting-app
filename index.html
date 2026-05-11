@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wine Tasting Notes</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <h1>Wine Tasting Notes</h1>
+    <p>Mobile tasting worksheet</p>
+  </header>
+
+  <main>
+
+    <section class="card">
+      <h2>Details</h2>
+
+      <label>Wine Name</label>
+      <input type="text" id="wineName" placeholder="Enter wine name" />
+
+      <label>Producer</label>
+      <input type="text" id="producer" placeholder="Enter producer" />
+
+      <label>Vintage</label>
+      <input type="text" id="vintage" placeholder="2020" />
+    </section>
+
+    <section class="card">
+      <h2>Look</h2>
+
+      <label>Intensity</label>
+      <div class="button-group" data-group="intensity">
+        <button>Pale</button>
+        <button>Medium</button>
+        <button>Deep</button>
+      </div>
+
+      <label>Color</label>
+      <div class="button-group" data-group="color">
+        <button>Straw</button>
+        <button>Gold</button>
+        <button>Amber</button>
+        <button>Ruby</button>
+        <button>Garnet</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Smell</h2>
+
+      <label>Fruit</label>
+      <div class="chip-group">
+        <button class="chip">Citrus</button>
+        <button class="chip">Tropical</button>
+        <button class="chip">Red Fruit</button>
+        <button class="chip">Black Fruit</button>
+      </div>
+
+      <label>Notes</label>
+      <textarea id="smellNotes" rows="4" placeholder="Add aroma notes..."></textarea>
+    </section>
+
+    <section class="card">
+      <h2>Taste</h2>
+
+      <label>Sweetness</label>
+      <div class="button-group" data-group="sweetness">
+        <button>Bone Dry</button>
+        <button>Dry</button>
+        <button>Off-Dry</button>
+        <button>Sweet</button>
+      </div>
+
+      <label>Alcohol</label>
+      <div class="button-group" data-group="alcohol">
+        <button>&lt;10%</button>
+        <button>10–11.5%</button>
+        <button>11.5–13.5%</button>
+        <button>13.5–15%</button>
+        <button>&gt;15%</button>
+      </div>
+
+      <label>Tasting Notes</label>
+      <textarea id="tasteNotes" rows="5" placeholder="Describe the palate..."></textarea>
+    </section>
+
+    <button id="saveButton">Save Notes</button>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
