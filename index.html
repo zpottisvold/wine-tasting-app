@@ -1,76 +1,225 @@
 <!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Wine Tasting Notes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
+  <!-- Saved Tastings Panel -->
+  <div id="savedPanel" class="panel hidden">
+    <div class="panel-header">
+      <h2>Saved Tastings</h2>
+      <button class="panel-close" id="closePanel">✕</button>
+    </div>
+    <div id="savedList" class="saved-list"></div>
+  </div>
+  <div id="overlay" class="overlay hidden"></div>
+
   <header>
-    <h1>Wine Tasting Notes</h1>
-    <p>Mobile tasting worksheet</p>
+    <div class="header-inner">
+      <div>
+        <h1>Tasting Notes</h1>
+        <p class="header-sub">Blind tasting worksheet</p>
+      </div>
+      <button id="viewSaved" class="saved-btn">
+        <span id="savedCount">0</span> Saved
+      </button>
+    </div>
   </header>
 
   <main>
 
+    <!-- ── DETAILS ─────────────────────────────── -->
     <section class="card">
+      <div class="card-label">Session</div>
       <h2>Details</h2>
 
-      <label>Wine Name</label>
-      <input type="text" id="wineName" placeholder="Enter wine name" />
+      <label>Wine Name <span class="optional">(optional — fill after guessing)</span></label>
+      <input type="text" id="wineName" placeholder="e.g. Château Margaux" />
 
-      <label>Producer</label>
+      <label>Producer <span class="optional">(optional)</span></label>
       <input type="text" id="producer" placeholder="Enter producer" />
 
-      <label>Vintage</label>
-      <input type="text" id="vintage" placeholder="2020" />
+      <label>Vintage <span class="optional">(optional)</span></label>
+      <input type="text" id="vintage" placeholder="e.g. 2018" maxlength="4" />
     </section>
 
+    <!-- ── LOOK ──────────────────────────────────── -->
     <section class="card">
+      <div class="card-label">Step 1</div>
       <h2>Look</h2>
 
       <label>Intensity</label>
-      <div class="button-group" data-group="intensity">
+      <div class="button-group" data-group="lookIntensity">
         <button>Pale</button>
         <button>Medium</button>
         <button>Deep</button>
       </div>
 
-      <label>Color</label>
-      <div class="button-group" data-group="color">
-        <button>Straw</button>
-        <button>Gold</button>
-        <button>Amber</button>
-        <button>Ruby</button>
-        <button>Garnet</button>
+      <label>Color — White</label>
+      <div class="color-group">
+        <button class="color-btn" data-group="color" data-color="#F7F3C8" style="--swatch:#F7F3C8">Lemon</button>
+        <button class="color-btn" data-group="color" data-color="#E8D87A" style="--swatch:#E8D87A">Straw</button>
+        <button class="color-btn" data-group="color" data-color="#C9A84C" style="--swatch:#C9A84C">Gold</button>
+        <button class="color-btn" data-group="color" data-color="#A0692A" style="--swatch:#A0692A">Amber</button>
+        <button class="color-btn" data-group="color" data-color="#8B4513" style="--swatch:#8B4513">Brown</button>
+      </div>
+
+      <label>Color — Rosé</label>
+      <div class="color-group">
+        <button class="color-btn" data-group="color" data-color="#FFB3BA" style="--swatch:#FFB3BA">Pink</button>
+        <button class="color-btn" data-group="color" data-color="#FA8072" style="--swatch:#FA8072">Salmon</button>
+        <button class="color-btn" data-group="color" data-color="#E07B54" style="--swatch:#E07B54">Orange</button>
+      </div>
+
+      <label>Color — Red</label>
+      <div class="color-group">
+        <button class="color-btn" data-group="color" data-color="#6B0F1A" style="--swatch:#6B0F1A">Purple</button>
+        <button class="color-btn" data-group="color" data-color="#9B1B30" style="--swatch:#9B1B30">Ruby</button>
+        <button class="color-btn" data-group="color" data-color="#6D2B3D" style="--swatch:#6D2B3D">Garnet</button>
+        <button class="color-btn" data-group="color" data-color="#8B2635" style="--swatch:#8B2635">Brick</button>
+        <button class="color-btn" data-group="color" data-color="#7B3F00" style="--swatch:#7B3F00">Tawny</button>
+      </div>
+
+      <label>Clarity</label>
+      <div class="button-group" data-group="clarity">
+        <button>Clear</button>
+        <button>Slight Haze</button>
+        <button>Hazy</button>
+      </div>
+
+      <label>Bubbles</label>
+      <div class="button-group" data-group="bubbles">
+        <button>None</button>
+        <button>Slight</button>
+        <button>Spritz</button>
+        <button>Mousse</button>
       </div>
     </section>
 
+    <!-- ── NOSE ──────────────────────────────────── -->
     <section class="card">
-      <h2>Smell</h2>
+      <div class="card-label">Step 2</div>
+      <h2>Nose</h2>
 
-      <label>Fruit</label>
-      <div class="chip-group">
+      <label>Condition</label>
+      <div class="button-group" data-group="noseCondition">
+        <button>Clean</button>
+        <button>Faulty</button>
+      </div>
+
+      <label>Intensity</label>
+      <div class="button-group" data-group="noseIntensity">
+        <button>Delicate</button>
+        <button>Med–</button>
+        <button>Medium</button>
+        <button>Med+</button>
+        <button>Pronounced</button>
+      </div>
+
+      <label>Fruit Aromas</label>
+      <div class="chip-group" data-group="noseFruit">
         <button class="chip">Citrus</button>
+        <button class="chip">Green Apple</button>
+        <button class="chip">Stone Fruit</button>
         <button class="chip">Tropical</button>
+        <button class="chip">Melon</button>
         <button class="chip">Red Fruit</button>
         <button class="chip">Black Fruit</button>
+        <button class="chip">Dried Fruit</button>
+        <button class="chip">Jammy</button>
       </div>
 
-      <label>Notes</label>
-      <textarea id="smellNotes" rows="4" placeholder="Add aroma notes..."></textarea>
+      <label>Non-Fruit Aromas</label>
+      <div class="chip-group" data-group="noseNonFruit">
+        <button class="chip">Floral</button>
+        <button class="chip">Violet</button>
+        <button class="chip">Rose</button>
+        <button class="chip">Herbal</button>
+        <button class="chip">Grassy</button>
+        <button class="chip">Vegetal</button>
+        <button class="chip">Spice</button>
+        <button class="chip">Pepper</button>
+        <button class="chip">Toast</button>
+        <button class="chip">Vanilla</button>
+        <button class="chip">Oak</button>
+        <button class="chip">Smoke</button>
+        <button class="chip">Mineral</button>
+        <button class="chip">Petrol</button>
+        <button class="chip">Earthy</button>
+        <button class="chip">Leather</button>
+        <button class="chip">Barnyard</button>
+        <button class="chip">Funk</button>
+        <button class="chip">Oxidative</button>
+      </div>
+
+      <label>Development</label>
+      <div class="button-group" data-group="noseDevelopment">
+        <button>Youthful</button>
+        <button>Developing</button>
+        <button>Mature</button>
+        <button>Tired</button>
+      </div>
+
+      <label>Aroma Notes</label>
+      <textarea id="noseNotes" rows="3" placeholder="Describe the nose in your own words…"></textarea>
     </section>
 
+    <!-- ── PALATE ─────────────────────────────────── -->
     <section class="card">
-      <h2>Taste</h2>
+      <div class="card-label">Step 3</div>
+      <h2>Palate</h2>
 
       <label>Sweetness</label>
       <div class="button-group" data-group="sweetness">
         <button>Bone Dry</button>
         <button>Dry</button>
         <button>Off-Dry</button>
+        <button>Med-Sweet</button>
         <button>Sweet</button>
+        <button>Luscious</button>
+      </div>
+
+      <label>Acidity</label>
+      <div class="button-group" data-group="acidity">
+        <button>Low</button>
+        <button>Med–</button>
+        <button>Medium</button>
+        <button>Med+</button>
+        <button>High</button>
+      </div>
+
+      <label>Tannin</label>
+      <div class="button-group" data-group="tannin">
+        <button>None</button>
+        <button>Low</button>
+        <button>Med–</button>
+        <button>Medium</button>
+        <button>Med+</button>
+        <button>High</button>
+      </div>
+
+      <label>Tannin Texture</label>
+      <div class="button-group" data-group="tanninTexture">
+        <button>Silky</button>
+        <button>Velvety</button>
+        <button>Grippy</button>
+        <button>Coarse</button>
+      </div>
+
+      <label>Body</label>
+      <div class="button-group" data-group="body">
+        <button>Light</button>
+        <button>Med–</button>
+        <button>Medium</button>
+        <button>Med+</button>
+        <button>Full</button>
       </div>
 
       <label>Alcohol</label>
@@ -82,13 +231,111 @@
         <button>&gt;15%</button>
       </div>
 
-      <label>Tasting Notes</label>
-      <textarea id="tasteNotes" rows="5" placeholder="Describe the palate..."></textarea>
+      <label>Finish</label>
+      <div class="button-group" data-group="finish">
+        <button>Short</button>
+        <button>Medium</button>
+        <button>Long</button>
+        <button>Very Long</button>
+      </div>
+
+      <label>Palate Flavours</label>
+      <div class="chip-group" data-group="palateFlavours">
+        <button class="chip">Citrus</button>
+        <button class="chip">Green Apple</button>
+        <button class="chip">Stone Fruit</button>
+        <button class="chip">Tropical</button>
+        <button class="chip">Red Fruit</button>
+        <button class="chip">Black Fruit</button>
+        <button class="chip">Dried Fruit</button>
+        <button class="chip">Floral</button>
+        <button class="chip">Herbal</button>
+        <button class="chip">Spice</button>
+        <button class="chip">Pepper</button>
+        <button class="chip">Creamy</button>
+        <button class="chip">Toasty</button>
+        <button class="chip">Nutty</button>
+        <button class="chip">Chocolate</button>
+        <button class="chip">Coffee</button>
+        <button class="chip">Smoky</button>
+        <button class="chip">Mineral</button>
+        <button class="chip">Savoury</button>
+        <button class="chip">Earthy</button>
+        <button class="chip">Leather</button>
+      </div>
+
+      <label>Palate Notes</label>
+      <textarea id="palataNotes" rows="3" placeholder="Describe the palate in your own words…"></textarea>
     </section>
 
-    <button id="saveButton">Save Notes</button>
+    <!-- ── CONCLUSIONS ───────────────────────────── -->
+    <section class="card">
+      <div class="card-label">Step 4</div>
+      <h2>Conclusions</h2>
+
+      <label>Quality</label>
+      <div class="button-group" data-group="quality">
+        <button>Faulty</button>
+        <button>Poor</button>
+        <button>Acceptable</button>
+        <button>Good</button>
+        <button>Very Good</button>
+        <button>Outstanding</button>
+      </div>
+
+      <label>Readiness to Drink</label>
+      <div class="button-group" data-group="readiness">
+        <button>Too Young</button>
+        <button>Drink Now</button>
+        <button>Drinking Window</button>
+        <button>Hold</button>
+        <button>Past Peak</button>
+      </div>
+    </section>
+
+    <!-- ── BLIND GUESS ───────────────────────────── -->
+    <section class="card card-guess">
+      <div class="card-label">Step 5</div>
+      <h2>Blind Guess</h2>
+      <p class="card-desc">Write your best guess before revealing the wine.</p>
+
+      <label>Grape Variety / Style</label>
+      <input type="text" id="guessGrape" placeholder="e.g. Pinot Noir, Chardonnay…" />
+
+      <label>Country</label>
+      <input type="text" id="guessCountry" placeholder="e.g. France, Italy…" />
+
+      <label>Region</label>
+      <input type="text" id="guessRegion" placeholder="e.g. Burgundy, Barossa…" />
+
+      <label>Producer</label>
+      <input type="text" id="guessProducer" placeholder="Your best guess…" />
+
+      <label>Vintage</label>
+      <input type="text" id="guessVintage" placeholder="e.g. 2019" maxlength="4" />
+
+      <label>Price Range</label>
+      <div class="button-group" data-group="guessPrice">
+        <button>&lt;€15</button>
+        <button>€15–30</button>
+        <button>€30–60</button>
+        <button>€60–120</button>
+        <button>&gt;€120</button>
+      </div>
+
+      <label>Overall Impression</label>
+      <textarea id="overallNotes" rows="3" placeholder="Summary thoughts, confidence level, what you'd pair it with…"></textarea>
+    </section>
+
+    <div class="action-row">
+      <button id="saveButton" class="btn-save">Save Tasting</button>
+      <button id="clearButton" class="btn-clear">Clear</button>
+    </div>
 
   </main>
+
+  <!-- Toast notification -->
+  <div id="toast" class="toast hidden">Tasting saved ✓</div>
 
   <script src="script.js"></script>
 </body>
