@@ -11,7 +11,22 @@
 </head>
 <body>
 
-  <!-- Saved Tastings Panel -->
+  <!-- ── API Key Modal ──────────────────────────────────── -->
+  <div id="apiKeyModal" class="modal-backdrop hidden">
+    <div class="modal-box">
+      <div class="modal-gem">✦</div>
+      <h3>AI Helper Setup</h3>
+      <p>The AI descriptor helper uses Claude. Enter your Anthropic API key — it's stored only in this browser.</p>
+      <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-…" autocomplete="off" spellcheck="false" />
+      <div class="modal-actions">
+        <button id="apiKeySave" class="modal-btn-primary">Save &amp; Enable</button>
+        <button id="apiKeyCancel" class="modal-btn-secondary">Cancel</button>
+      </div>
+      <p class="modal-note">Get a key at <a href="https://console.anthropic.com" target="_blank" rel="noopener">console.anthropic.com</a></p>
+    </div>
+  </div>
+
+  <!-- ── Saved Tastings Panel ───────────────────────────── -->
   <div id="savedPanel" class="panel hidden">
     <div class="panel-header">
       <h2>Saved Tastings</h2>
@@ -21,6 +36,7 @@
   </div>
   <div id="overlay" class="overlay hidden"></div>
 
+  <!-- ── Header ─────────────────────────────────────────── -->
   <header>
     <div class="header-inner">
       <div>
@@ -35,7 +51,7 @@
 
   <main>
 
-    <!-- ── DETAILS ─────────────────────────────── -->
+    <!-- ── DETAILS ──────────────────────────────────────── -->
     <section class="card">
       <div class="card-label">Session</div>
       <h2>Details</h2>
@@ -50,250 +66,147 @@
       <input type="text" id="vintage" placeholder="e.g. 2018" maxlength="4" />
     </section>
 
-    <!-- ── LOOK ──────────────────────────────────── -->
+    <!-- ── LOOK ─────────────────────────────────────────── -->
     <section class="card">
       <div class="card-label">Step 1</div>
       <h2>Look</h2>
 
       <label>Intensity</label>
       <div class="button-group" data-group="lookIntensity">
-        <button>Pale</button>
-        <button>Medium</button>
-        <button>Deep</button>
+        <button>Pale</button><button>Medium</button><button>Deep</button>
       </div>
 
       <label>Color — White</label>
       <div class="color-group">
-        <button class="color-btn" data-group="color" data-color="#F7F3C8" style="--swatch:#F7F3C8">Lemon</button>
-        <button class="color-btn" data-group="color" data-color="#E8D87A" style="--swatch:#E8D87A">Straw</button>
-        <button class="color-btn" data-group="color" data-color="#C9A84C" style="--swatch:#C9A84C">Gold</button>
-        <button class="color-btn" data-group="color" data-color="#A0692A" style="--swatch:#A0692A">Amber</button>
-        <button class="color-btn" data-group="color" data-color="#8B4513" style="--swatch:#8B4513">Brown</button>
+        <button class="color-btn" data-group="color" style="--swatch:#F7F3C8">Lemon</button>
+        <button class="color-btn" data-group="color" style="--swatch:#E8D87A">Straw</button>
+        <button class="color-btn" data-group="color" style="--swatch:#C9A84C">Gold</button>
+        <button class="color-btn" data-group="color" style="--swatch:#A0692A">Amber</button>
+        <button class="color-btn" data-group="color" style="--swatch:#8B4513">Brown</button>
       </div>
 
       <label>Color — Rosé</label>
       <div class="color-group">
-        <button class="color-btn" data-group="color" data-color="#FFB3BA" style="--swatch:#FFB3BA">Pink</button>
-        <button class="color-btn" data-group="color" data-color="#FA8072" style="--swatch:#FA8072">Salmon</button>
-        <button class="color-btn" data-group="color" data-color="#E07B54" style="--swatch:#E07B54">Orange</button>
+        <button class="color-btn" data-group="color" style="--swatch:#FFB3BA">Pink</button>
+        <button class="color-btn" data-group="color" style="--swatch:#FA8072">Salmon</button>
+        <button class="color-btn" data-group="color" style="--swatch:#E07B54">Orange</button>
       </div>
 
       <label>Color — Red</label>
       <div class="color-group">
-        <button class="color-btn" data-group="color" data-color="#6B0F1A" style="--swatch:#6B0F1A">Purple</button>
-        <button class="color-btn" data-group="color" data-color="#9B1B30" style="--swatch:#9B1B30">Ruby</button>
-        <button class="color-btn" data-group="color" data-color="#6D2B3D" style="--swatch:#6D2B3D">Garnet</button>
-        <button class="color-btn" data-group="color" data-color="#8B2635" style="--swatch:#8B2635">Brick</button>
-        <button class="color-btn" data-group="color" data-color="#7B3F00" style="--swatch:#7B3F00">Tawny</button>
+        <button class="color-btn" data-group="color" style="--swatch:#6B0F1A">Purple</button>
+        <button class="color-btn" data-group="color" style="--swatch:#9B1B30">Ruby</button>
+        <button class="color-btn" data-group="color" style="--swatch:#6D2B3D">Garnet</button>
+        <button class="color-btn" data-group="color" style="--swatch:#8B2635">Brick</button>
+        <button class="color-btn" data-group="color" style="--swatch:#7B3F00">Tawny</button>
       </div>
 
       <label>Clarity</label>
       <div class="button-group" data-group="clarity">
-        <button>Clear</button>
-        <button>Slight Haze</button>
-        <button>Hazy</button>
+        <button>Clear</button><button>Slight Haze</button><button>Hazy</button>
       </div>
 
       <label>Bubbles</label>
       <div class="button-group" data-group="bubbles">
-        <button>None</button>
-        <button>Slight</button>
-        <button>Spritz</button>
-        <button>Mousse</button>
+        <button>None</button><button>Slight</button><button>Spritz</button><button>Mousse</button>
       </div>
     </section>
 
-    <!-- ── NOSE ──────────────────────────────────── -->
+    <!-- ── NOSE ─────────────────────────────────────────── -->
     <section class="card">
       <div class="card-label">Step 2</div>
       <h2>Nose</h2>
 
       <label>Condition</label>
       <div class="button-group" data-group="noseCondition">
-        <button>Clean</button>
-        <button>Faulty</button>
+        <button>Clean</button><button>Faulty</button>
       </div>
 
       <label>Intensity</label>
       <div class="button-group" data-group="noseIntensity">
-        <button>Delicate</button>
-        <button>Med–</button>
-        <button>Medium</button>
-        <button>Med+</button>
-        <button>Pronounced</button>
+        <button>Delicate</button><button>Med–</button><button>Medium</button><button>Med+</button><button>Pronounced</button>
       </div>
 
-      <label>Fruit Aromas</label>
-      <div class="chip-group" data-group="noseFruit">
-        <button class="chip">Citrus</button>
-        <button class="chip">Green Apple</button>
-        <button class="chip">Stone Fruit</button>
-        <button class="chip">Tropical</button>
-        <button class="chip">Melon</button>
-        <button class="chip">Red Fruit</button>
-        <button class="chip">Black Fruit</button>
-        <button class="chip">Dried Fruit</button>
-        <button class="chip">Jammy</button>
-      </div>
-
-      <label>Non-Fruit Aromas</label>
-      <div class="chip-group" data-group="noseNonFruit">
-        <button class="chip">Floral</button>
-        <button class="chip">Violet</button>
-        <button class="chip">Rose</button>
-        <button class="chip">Herbal</button>
-        <button class="chip">Grassy</button>
-        <button class="chip">Vegetal</button>
-        <button class="chip">Spice</button>
-        <button class="chip">Pepper</button>
-        <button class="chip">Toast</button>
-        <button class="chip">Vanilla</button>
-        <button class="chip">Oak</button>
-        <button class="chip">Smoke</button>
-        <button class="chip">Mineral</button>
-        <button class="chip">Petrol</button>
-        <button class="chip">Earthy</button>
-        <button class="chip">Leather</button>
-        <button class="chip">Barnyard</button>
-        <button class="chip">Funk</button>
-        <button class="chip">Oxidative</button>
-      </div>
+      <label>Aromas</label>
+      <div class="wheel-ai-container" data-context="nose"></div>
 
       <label>Development</label>
       <div class="button-group" data-group="noseDevelopment">
-        <button>Youthful</button>
-        <button>Developing</button>
-        <button>Mature</button>
-        <button>Tired</button>
+        <button>Youthful</button><button>Developing</button><button>Mature</button><button>Tired</button>
       </div>
 
       <label>Aroma Notes</label>
       <textarea id="noseNotes" rows="3" placeholder="Describe the nose in your own words…"></textarea>
     </section>
 
-    <!-- ── PALATE ─────────────────────────────────── -->
+    <!-- ── PALATE ────────────────────────────────────────── -->
     <section class="card">
       <div class="card-label">Step 3</div>
       <h2>Palate</h2>
 
       <label>Sweetness</label>
       <div class="button-group" data-group="sweetness">
-        <button>Bone Dry</button>
-        <button>Dry</button>
-        <button>Off-Dry</button>
-        <button>Med-Sweet</button>
-        <button>Sweet</button>
-        <button>Luscious</button>
+        <button>Bone Dry</button><button>Dry</button><button>Off-Dry</button>
+        <button>Med-Sweet</button><button>Sweet</button><button>Luscious</button>
       </div>
 
       <label>Acidity</label>
       <div class="button-group" data-group="acidity">
-        <button>Low</button>
-        <button>Med–</button>
-        <button>Medium</button>
-        <button>Med+</button>
-        <button>High</button>
+        <button>Low</button><button>Med–</button><button>Medium</button><button>Med+</button><button>High</button>
       </div>
 
       <label>Tannin</label>
       <div class="button-group" data-group="tannin">
-        <button>None</button>
-        <button>Low</button>
-        <button>Med–</button>
-        <button>Medium</button>
-        <button>Med+</button>
-        <button>High</button>
+        <button>None</button><button>Low</button><button>Med–</button><button>Medium</button><button>Med+</button><button>High</button>
       </div>
 
       <label>Tannin Texture</label>
       <div class="button-group" data-group="tanninTexture">
-        <button>Silky</button>
-        <button>Velvety</button>
-        <button>Grippy</button>
-        <button>Coarse</button>
+        <button>Silky</button><button>Velvety</button><button>Grippy</button><button>Coarse</button>
       </div>
 
       <label>Body</label>
       <div class="button-group" data-group="body">
-        <button>Light</button>
-        <button>Med–</button>
-        <button>Medium</button>
-        <button>Med+</button>
-        <button>Full</button>
+        <button>Light</button><button>Med–</button><button>Medium</button><button>Med+</button><button>Full</button>
       </div>
 
       <label>Alcohol</label>
       <div class="button-group" data-group="alcohol">
-        <button>&lt;10%</button>
-        <button>10–11.5%</button>
-        <button>11.5–13.5%</button>
-        <button>13.5–15%</button>
-        <button>&gt;15%</button>
+        <button>&lt;10%</button><button>10–11.5%</button><button>11.5–13.5%</button>
+        <button>13.5–15%</button><button>&gt;15%</button>
       </div>
 
       <label>Finish</label>
       <div class="button-group" data-group="finish">
-        <button>Short</button>
-        <button>Medium</button>
-        <button>Long</button>
-        <button>Very Long</button>
+        <button>Short</button><button>Medium</button><button>Long</button><button>Very Long</button>
       </div>
 
-      <label>Palate Flavours</label>
-      <div class="chip-group" data-group="palateFlavours">
-        <button class="chip">Citrus</button>
-        <button class="chip">Green Apple</button>
-        <button class="chip">Stone Fruit</button>
-        <button class="chip">Tropical</button>
-        <button class="chip">Red Fruit</button>
-        <button class="chip">Black Fruit</button>
-        <button class="chip">Dried Fruit</button>
-        <button class="chip">Floral</button>
-        <button class="chip">Herbal</button>
-        <button class="chip">Spice</button>
-        <button class="chip">Pepper</button>
-        <button class="chip">Creamy</button>
-        <button class="chip">Toasty</button>
-        <button class="chip">Nutty</button>
-        <button class="chip">Chocolate</button>
-        <button class="chip">Coffee</button>
-        <button class="chip">Smoky</button>
-        <button class="chip">Mineral</button>
-        <button class="chip">Savoury</button>
-        <button class="chip">Earthy</button>
-        <button class="chip">Leather</button>
-      </div>
+      <label>Flavours</label>
+      <div class="wheel-ai-container" data-context="palate"></div>
 
       <label>Palate Notes</label>
       <textarea id="palataNotes" rows="3" placeholder="Describe the palate in your own words…"></textarea>
     </section>
 
-    <!-- ── CONCLUSIONS ───────────────────────────── -->
+    <!-- ── CONCLUSIONS ───────────────────────────────────── -->
     <section class="card">
       <div class="card-label">Step 4</div>
       <h2>Conclusions</h2>
 
       <label>Quality</label>
       <div class="button-group" data-group="quality">
-        <button>Faulty</button>
-        <button>Poor</button>
-        <button>Acceptable</button>
-        <button>Good</button>
-        <button>Very Good</button>
-        <button>Outstanding</button>
+        <button>Faulty</button><button>Poor</button><button>Acceptable</button>
+        <button>Good</button><button>Very Good</button><button>Outstanding</button>
       </div>
 
       <label>Readiness to Drink</label>
       <div class="button-group" data-group="readiness">
-        <button>Too Young</button>
-        <button>Drink Now</button>
-        <button>Drinking Window</button>
-        <button>Hold</button>
-        <button>Past Peak</button>
+        <button>Too Young</button><button>Drink Now</button><button>Drinking Window</button>
+        <button>Hold</button><button>Past Peak</button>
       </div>
     </section>
 
-    <!-- ── BLIND GUESS ───────────────────────────── -->
+    <!-- ── BLIND GUESS ───────────────────────────────────── -->
     <section class="card card-guess">
       <div class="card-label">Step 5</div>
       <h2>Blind Guess</h2>
@@ -316,11 +229,8 @@
 
       <label>Price Range</label>
       <div class="button-group" data-group="guessPrice">
-        <button>&lt;€15</button>
-        <button>€15–30</button>
-        <button>€30–60</button>
-        <button>€60–120</button>
-        <button>&gt;€120</button>
+        <button>&lt;€15</button><button>€15–30</button><button>€30–60</button>
+        <button>€60–120</button><button>&gt;€120</button>
       </div>
 
       <label>Overall Impression</label>
@@ -334,7 +244,6 @@
 
   </main>
 
-  <!-- Toast notification -->
   <div id="toast" class="toast hidden">Tasting saved ✓</div>
 
   <script src="script.js"></script>
